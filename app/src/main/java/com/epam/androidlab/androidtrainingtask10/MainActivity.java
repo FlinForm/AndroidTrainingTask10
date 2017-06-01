@@ -14,19 +14,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     ContactsContract.Contacts._ID,
                     ContactsContract.Contacts.LOOKUP_KEY,
                     ContactsContract.Contacts.DISPLAY_NAME_PRIMARY};
-    private final String SELECTION =
-            ContactsContract.Contacts.DISPLAY_NAME_PRIMARY + " LIKE ?";
     private SimpleCursorAdapter cursorAdapter;
     private final static String[] FROM_COLUMNS = {ContactsContract.Contacts.DISPLAY_NAME_PRIMARY};
     private final static int[] TO_IDS = {android.R.id.text1};
-    private ListView contactList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        contactList = (ListView) findViewById(R.id.list);
+        ListView contactList = (ListView) findViewById(R.id.list);
         cursorAdapter = new SimpleCursorAdapter(
                 this,
                 R.layout.list_item,
@@ -40,14 +37,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public Loader onCreateLoader(int id, Bundle args) {
-        CursorLoader cursorLoader = new CursorLoader(
+        String SELECTION = ContactsContract.Contacts.DISPLAY_NAME_PRIMARY + " LIKE ?";
+        return new CursorLoader(
                 this,
                 ContactsContract.Contacts.CONTENT_URI,
                 PROJECTION,
                 SELECTION,
                 null,
                 null);
-        return cursorLoader;
     }
 
     @Override

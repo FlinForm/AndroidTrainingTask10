@@ -9,9 +9,9 @@ import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ListView;
-import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks {
+public class MainActivity extends AppCompatActivity
+        implements LoaderManager.LoaderCallbacks<Cursor> {
     static final String[] PROJECTION = new String[] {
             ContactsContract.Contacts._ID,
             ContactsContract.Contacts.DISPLAY_NAME,
@@ -26,24 +26,22 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         contactList = (ListView) findViewById(R.id.list);
-
         cursorAdapter = new SimpleCursorAdapter(
                 this,
-                R.id.layout,
+                android.R.layout.simple_list_item_2,
                 null,
                 new String[] {
                         ContactsContract.Contacts.DISPLAY_NAME,
                         ContactsContract.Contacts.CONTACT_STATUS},
                 new int[] {android.R.id.text1, android.R.id.text2},
                 0);
-
+        contactList.setAdapter(cursorAdapter);
         getSupportLoaderManager().initLoader(0, null, this);
     }
 
     @Override
-    public Loader onCreateLoader(int id, Bundle args) {
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String select = "((" + ContactsContract.Contacts.DISPLAY_NAME + " NOTNULL) AND ("
                 + ContactsContract.Contacts.HAS_PHONE_NUMBER + "=1) AND ("
                 + ContactsContract.Contacts.DISPLAY_NAME + " != '' ))";
@@ -54,14 +52,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 null,
                 ContactsContract.Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC");
     }
-
     @Override
-    public void onLoadFinished(Loader loader, Object data) {
-        cursorAdapter.swapCursor((Cursor) data);
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        cursorAdapter.swapCursor(data);
     }
-
     @Override
-    public void onLoaderReset(Loader loader) {
+    public void onLoaderReset(Loader<Cursor> loader) {
         cursorAdapter.swapCursor(null);
     }
 }
